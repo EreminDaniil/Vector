@@ -9,35 +9,62 @@ UVector::UVector()
 
 UVector::UVector(const UVector& other) // copy ctor
 {
-    if (this != &other) 
-    {
-        delete[] Array;
-        size_t Array = other.Capacity;
-        for (size_t i = 0; i < other.SizeVector; i++)
-        {
-            Array[i] = other.SizeVector[i];
-        }
-        SizeVector = other.SizeVector;
-        Capacity = other.Capacity;
-    }
+	if (other.Array == nullptr)
+	{
+		return;
+	}
+	FNode* CurrentOther = other.Array;
+	FNode* Current = this->Array;
+	Current = new FNode;
+	Current->Value = CurrentOther->Value;
+	SizeVector = other.SizeVector;
+	Capacity = other.SizeVector;
+	while (CurrentOther->Next != nullptr)
+	{
+		CurrentOther = CurrentOther->Next;
+		FNode* Temp = new FNode;
+		Temp->Prev = Current;
+		Current->Next = Temp;
+		Temp->Value = CurrentOther->Value;
+		Current = Temp;
+	}
 }
 
-std::vector
-
-UVector::UVector& operator=(const UVector& other) // copy assignment
+UVector& UVector::operator=(const UVector& other) // copy assignment
 {
-    if (this != &other)
-    {
-        delete[] Array;
-    }
-	Array = other.Capacity;
-    for (size_t i = 0; i < other.SizeVector; ++i)
-    {
-        Array[i] = other.Array[i];
-    }
-    SizeVector = other.SizeVector;
-    Capacity = other.Capacity;
-	return *this;
+	if (other.Array == nullptr)
+	{
+		return;
+	}
+	FNode* CurrentOther = other.Array;
+	FNode* Current = this->Array;
+	if (other.SizeVector > this->Capacity)
+	{
+		this->Capacity = other.SizeVector;
+	}
+	SizeVector = other.SizeVector;
+	if (Current == nullptr)
+	{
+		Current = new FNode;
+	}
+	Current->Value = CurrentOther->Value;
+	while (CurrentOther->Next != nullptr)
+	{
+		CurrentOther = CurrentOther->Next;
+		FNode* Temp;
+		if (Current->Next == nullptr)
+		{
+			Temp = new FNode;
+		}
+		else
+		{
+			Temp = Current->Next;
+		}
+		Temp->Prev = Current;
+		Current->Next = Temp;
+		Temp->Value = CurrentOther->Value;
+		Current = Temp;
+	}
 }
 
 UVector::~UVector() // destructor
